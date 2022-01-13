@@ -18,6 +18,7 @@ import json
 import subprocess
 import unittest
 import os
+import pytest
 
 url = "http://127.0.0.1:8083"
 interpreter = "python3"
@@ -39,6 +40,7 @@ class TrainReservationTest(unittest.TestCase):
         assert "75bcd15" == reservation["booking_reference"]
 
 
+    @pytest.mark.skip(reason="not implemented the command line interface for this service")
     def test_reserve_seats_via_cmd(self):
         response = subprocess.check_output([interpreter, reservation_script, "express2000", "4"], stderr=subprocess.STDOUT, universal_newlines = True)
         reservation = json.loads(response)
