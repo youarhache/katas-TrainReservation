@@ -17,7 +17,7 @@ class TrainDataAdapter:
 
     def get_train_data(self, train_id: str) -> Optional[List[Seat]]:
         response = requests.get(self.URL + f"/data_for_train/{train_id}")
-        train_data = json.loads(response.json())
+        train_data = response.json()
         if "seats" not in train_data:
             return None
         seats = []
@@ -40,7 +40,7 @@ class TrainDataAdapter:
             "booking_reference": booking_reference,
         }
         response = requests.post(self.URL + "/reserve", data=form_data)
-        return f"situation after reservation: {json.loads(response.json())}"
+        return f"situation after reservation: {response.json()}"
 
 
 class BookingReferenceClient:

@@ -1,8 +1,11 @@
 import json
 from typing import List, Optional, Union
 from dataclasses import dataclass, asdict
+from flask import Flask, request
 from train_services_adapters import Seat
 from train_services_adapters import TrainDataAdapter, BookingReferenceClient
+
+app = Flask(__name__)
 
 
 @dataclass
@@ -22,12 +25,6 @@ class TicketOffice:
     ) -> None:
         self.train_service_adapter = train_service_adapter
         self.booking_reference_adapter = booking_reference_adapter
-
-    def reserve(self, train_id: str, seat_count: str) -> Optional[str]:
-        reservation = self.make_reservation(train_id, int(seat_count))
-        if not reservation:
-            return None
-        return json.dumps(asdict(reservation))
 
     def make_reservation(self, train_id: str, seat_count: int) -> Optional[Reservation]:
         if seat_count == 0:
@@ -99,10 +96,18 @@ class TicketOffice:
         return 100 * (1 - (len(empty_seats) - nb_seats_to_book) / len(all_seats))
 
 
-if __name__ == "__main__":
-    """Deploy this class as a web service using CherryPy"""
-    import cherrypy
+@app.route("/reserve", methods=["POST"])
+def reserve() -> Optional[str]:
+    train_id = request.form["train_id"]
+    seat_count = request.form["seat_count"]
+    ticket_office = TicketOffice(TrainDataAdapter(), BookingReferenceClient())
+    reservation = ticket_office.make_reservation(train_id, int(seat_count))
+    if not reservation:
+        return None
+    return json.dumps(asdict(reservation))
 
-    TicketOffice.reserve.exposed = True
-    cherrypy.config.update({"server.socket_port": 8083})
-    cherrypy.quickstart(TicketOffice(TrainDataAdapter(), BookingReferenceClient()))
+
+if __name__ == "__main__":
+    app.config["SERVER_NAME"] = "127.0.0.1:8083"
+    app.config["DEBUG"] = True
+    app.run()

@@ -3,7 +3,7 @@ from ticket_office import TicketOffice, Reservation
 from train_services_adapters import Seat
 
 
-@patch("ticket_office.BookingReferenceAdapter")
+@patch("ticket_office.BookingReferenceClient")
 @patch("ticket_office.TrainDataAdapter")
 def test_should_return_none_when_reserve_0_seat(
     mock_train_data_adapter, mock_booking_ref_adapter
@@ -18,7 +18,7 @@ def test_should_return_none_when_reserve_0_seat(
     assert result is None
 
 
-@patch("ticket_office.BookingReferenceAdapter")
+@patch("ticket_office.BookingReferenceClient")
 @patch("ticket_office.TrainDataAdapter")
 def test_should_return_none_when_train_not_found(
     mock_train_data_adapter, mock_booking_ref_adapter
@@ -35,7 +35,7 @@ def test_should_return_none_when_train_not_found(
     assert result is None
 
 
-@patch("ticket_office.BookingReferenceAdapter")
+@patch("ticket_office.BookingReferenceClient")
 @patch("ticket_office.TrainDataAdapter")
 def test_should_return_none_when_full_train(
     mock_train_data_adapter, mock_booking_ref_adapter
@@ -56,7 +56,7 @@ def test_should_return_none_when_full_train(
     assert result is None
 
 
-@patch("ticket_office.BookingReferenceAdapter")
+@patch("ticket_office.BookingReferenceClient")
 @patch("ticket_office.TrainDataAdapter")
 def test_should_reserve_seat_when_empty_train(
     mock_train_data_adapter, mock_booking_ref_adapter
@@ -85,7 +85,7 @@ def test_should_reserve_seat_when_empty_train(
     )
 
 
-@patch("ticket_office.BookingReferenceAdapter")
+@patch("ticket_office.BookingReferenceClient")
 @patch("ticket_office.TrainDataAdapter")
 def test_should_reserve_two_seats_when_empty_train(
     mock_train_data_adapter, mock_booking_ref_adapter
@@ -116,7 +116,7 @@ def test_should_reserve_two_seats_when_empty_train(
     )
 
 
-@patch("ticket_office.BookingReferenceAdapter")
+@patch("ticket_office.BookingReferenceClient")
 @patch("ticket_office.TrainDataAdapter")
 def test_should_reserve_two_seats_in_second_coach_when_first_coach_full(
     mock_train_data_adapter, mock_booking_ref_adapter
@@ -150,7 +150,7 @@ def test_should_reserve_two_seats_in_second_coach_when_first_coach_full(
     )
 
 
-@patch("ticket_office.BookingReferenceAdapter")
+@patch("ticket_office.BookingReferenceClient")
 @patch("ticket_office.TrainDataAdapter")
 def test_should_reserve_two_seats_in_second_coach_when_first_coach_go_over_70(
     mock_train_data_adapter, mock_booking_ref_adapter
@@ -184,7 +184,7 @@ def test_should_reserve_two_seats_in_second_coach_when_first_coach_go_over_70(
     )
 
 
-@patch("ticket_office.BookingReferenceAdapter")
+@patch("ticket_office.BookingReferenceClient")
 @patch("ticket_office.TrainDataAdapter")
 def test_should_prefer_coach_C_when_coach_C_is_empty(
     mock_train_data_adapter, mock_booking_ref_adapter
