@@ -35,60 +35,58 @@ class TicketOffice:
         if not seats:
             return None
 
-        _empty_seats = [seat for seat in seats if not seat.booking_reference]
+        empty_seats = [seat for seat in seats if not seat.booking_reference]
         if (
-            self._compute_seats_occupation_persentage(seats, _empty_seats, seat_count)
+            self.compute_seats_occupation_persentage(seats, empty_seats, seat_count)
             > self.MAXIMUM_OCCUPATION_PERCENTAGE
         ):
             return None
 
-        _best_coach_empty_seats = self._get_best_coach_empty_seats(seat_count, seats)
+        best_coach_empty_seats = self.get_best_coach_empty_seats(seat_count, seats)
 
-        if _best_coach_empty_seats:
+        if best_coach_empty_seats:
 
-            _seats_to_reserve = _best_coach_empty_seats[:seat_count]
-            _booking_reference = self.booking_reference_adapter.get_booking_reference()
+            seats_to_reserve = best_coach_empty_seats[:seat_count]
+            booking_reference = self.booking_reference_adapter.get_booking_reference()
             self.train_service_adapter.reserve(
                 train_id=train_id,
-                seats=_seats_to_reserve,
-                booking_reference=_booking_reference,
+                seats=seats_to_reserve,
+                booking_reference=booking_reference,
             )
             return Reservation(
-                train_id, seats=_seats_to_reserve, booking_reference=_booking_reference
+                train_id, seats=seats_to_reserve, booking_reference=booking_reference
             )
 
-    def _get_best_coach_empty_seats(self, seat_count, train_seats):
-        _best_seats_occupation = (
+    def get_best_coach_empty_seats(self, seat_count, train_seats):
+        best_seats_occupation = (
             100  # intitialise occupation to maximum == 100% occupation
         )
-        _best_coach_empty_seats = None
-        _coaches = list({seat.coach for seat in train_seats})
+        best_coach_empty_seats = None
+        coaches = list({seat.coach for seat in train_seats})
 
-        for coach in _coaches:
-            _coach_seats = [
+        for coach in coaches:
+            coach_seats = [
                 seat.seat_name for seat in train_seats if seat.coach == coach
             ]
-            _empty_coach_seats = [
+            empty_coach_seats = [
                 seat.seat_name
                 for seat in train_seats
                 if not seat.booking_reference and seat.coach == coach
             ]
 
-            if seat_count <= len(_empty_coach_seats):
-                _new_seats_occupation = self._compute_seats_occupation_persentage(
-                    _coach_seats, _empty_coach_seats
+            if seat_count <= len(empty_coach_seats):
+                new_seats_occupation = self.compute_seats_occupation_persentage(
+                    coach_seats, empty_coach_seats
                 )
 
-                if _best_seats_occupation > _new_seats_occupation:
-                    _best_seats_occupation = _new_seats_occupation
-                    _best_coach_empty_seats = _empty_coach_seats
+                if best_seats_occupation > new_seats_occupation:
+                    best_seats_occupation = new_seats_occupation
+                    best_coach_empty_seats = empty_coach_seats
 
-        return _best_coach_empty_seats
+        return best_coach_empty_seats
 
     @staticmethod
-    def _compute_seats_occupation_persentage(
-        all_seats, empty_seats, nb_seats_to_book=0
-    ):
+    def compute_seats_occupation_persentage(all_seats, empty_seats, nb_seats_to_book=0):
         return 100 * (1 - (len(empty_seats) - nb_seats_to_book) / len(all_seats))
 
 
